@@ -303,6 +303,16 @@
             </p>
           </div>
           <p>
+            После этого Codex выбирает режим работы. Простые и безопасные задачи можно делегировать. Задачи,
+            где нужен смысловой разбор, ведутся вместе с человеком. Запись во внешний источник, отправка, удаление,
+            изменение Plane, Реестра, running automation или готового паспорта остаются human decision.
+          </p>
+          <div class="layer-table">
+            <div><strong>Delegate</strong><span>Codex может сам подготовить черновик, файл, digest или briefing и показать проверку</span></div>
+            <div><strong>Collaborate</strong><span>Codex помогает думать: собирает источники, предлагает структуру, вопросы и следующий артефакт</span></div>
+            <div><strong>Human decision</strong><span>человек решает, когда действие меняет внешний источник, задачу, отправку или готовый документ</span></div>
+          </div>
+          <p>
             Самый важный файл - `00_START_HERE.md`. Он говорит агенту: не читай всю папку, сначала определи тип
             задачи, потом открой только нужный слой. Это экономит время и снижает риск случайных выводов.
           </p>
@@ -461,7 +471,7 @@
             есть сигнал запуска, источники, шаги, формат результата, проверка качества и правило остановки.
           </p>
           <p>
-            Сейчас в `05_Скиллы/Codex` лежит 16 рабочих скиллов. Они сгруппированы не по названиям файлов, а по
+            Сейчас в `05_Скиллы/Codex` лежит 19 рабочих скиллов. Они сгруппированы не по названиям файлов, а по
             работе, которую снимают с головы: проектная память, PRD, документы по агентам, управленческая проверка,
             база знаний, отчётность, презентации и улучшение промптов. Так проще понять, что строить себе первым.
           </p>
@@ -473,6 +483,12 @@
           <p>
             Правило простое: скилл нужен не для каждой задачи. Скилл нужен там, где есть повторяемый рабочий
             процесс, риск ошибки, стандартный формат результата или важные правила безопасности.
+          </p>
+          <p>
+            Между разовым промптом и скиллом теперь есть промежуточный слой - `workflow_draft.md`. Его стоит
+            использовать, когда процесс уже повторяется, но ещё меняется. В нём фиксируются задача, триггер,
+            источники, результат, разрешённые действия, действия с подтверждением и проверка. Это помогает не
+            превращать каждый удачный промпт в новый скилл слишком рано.
           </p>
           <p>
             Скилл сохраняет не “что мы знаем”, а “как мы делаем работу”. Для БА первые кандидаты почти всегда
@@ -532,9 +548,9 @@
           </p>
           <p>
             Отдельно работает `kt-session-compound`. Это скилл закрытия рабочей сессии. После важной задачи он
-            помогает решить, что стоит сохранить: обновить проектный `КОНТЕКСТ.md`, добавить повторно используемый инсайт (reusable insight)
-            в базу знаний, улучшить существующий скилл или создать новый. Так система не просто выполняет работу,
-            а накапливает рабочую память после каждой сильной сессии.
+            задаёт главный вопрос: что из этой работы стоит сохранить как контекст, правило, шаблон, скилл или
+            automation. Обычно сохранять нужно только один самый полезный вывод. Так система не просто выполняет
+            работу, а накапливает рабочую память после сильных сессий без лишних новых слоёв.
           </p>
           <div class="result-card">
             <h3>Честная цена системы</h3>
@@ -561,7 +577,7 @@
             <div><strong>Материалы</strong><span>`lotus-email-draft` и `kt-open-design-slides`: письма, презентации и материалы в стиле KT</span></div>
             <div><strong>Качество промптов</strong><span>`prompt-improver`: улучшить промпт, когда рабочий процесс ещё рано превращать в скилл</span></div>
           </div>
-          <div class="try-this"><span>Попробуйте</span><p>Найдите одну БА-задачу, которую вы объясняли ИИ уже 3 раза. Это первый кандидат в скилл.</p></div>
+          <div class="try-this"><span>Попробуйте</span><p>Найдите одну БА-задачу, которую вы объясняли ИИ уже 3 раза. Сначала оформите её как `workflow_draft.md`, а в скилл переводите только после нескольких стабильных запусков.</p></div>
         </section>
 
         <section id="automations" class="section">
@@ -624,7 +640,7 @@
           </p>
           <div class="layer-table">
             <div><strong>Новый факт проекта</strong><span>обновить `КОНТЕКСТ.md`</span></div>
-            <div><strong>Управленческий статус</strong><span>предложить обновление Реестра</span></div>
+            <div><strong>Управленческий статус</strong><span>предложить обновление Реестра, запись делать только по разрешению</span></div>
             <div><strong>Исполнительное действие</strong><span>проверить или предложить задачу Plane</span></div>
             <div><strong>Неподтверждённый сигнал</strong><span>сформулировать вопрос к владельцу или заказчику</span></div>
             <div><strong>Повторяемая идея</strong><span>перенести в базу знаний или будущий скилл</span></div>
@@ -653,8 +669,14 @@
             `validate_daily_sync_digest.py` проверяет, что daily sync не вернулся к старому формату. Это скучная часть
             системы, но именно она делает её рабочей, а не демонстрационной.
           </p>
-          <div class="prompt-block" data-prompt="Role: Codex OS automation designer. Task: design the first daily sync. Goal: identify what changed in the last 24 hours and where each signal should go. Context: I may have one project and no automations yet. If the folder already exists, inspect AGENTS.md, START_HERE.md, project contexts, task sources, Telegram notes, and recent files. Steps: list signal sources; define the source of truth for project facts, tasks, management status, and reusable insights; propose the digest structure; mark where human review is required; separately list what should not be automated yet. Output format: first safe cycle, sources, output, review point, risks, and a 3-day trial checklist. Constraints: do not send messages, write to task systems, or update management records without confirmation. Do not invent tools I do not have.">
-            <div><span>Промпт</span><strong>Найти первые автоматизации</strong></div>
+          <p>
+            Новое правило простое: automation не создаётся после одного сигнала или одного удачного запуска.
+            Сначала процесс оформляется как `workflow_draft.md`, затем проходит 2-3 ручных запуска. Только после
+            этого есть смысл переносить его в automation, если понятны trigger, sources, output, review step,
+            owner, failure mode и readback.
+          </p>
+          <div class="prompt-block" data-prompt="Role: Codex OS automation designer. Task: design the first daily sync workflow. Goal: identify what changed in the last 24 hours and where each signal should go. Context: I may have one project and no automations yet. If the folder already exists, inspect AGENTS.md, START_HERE.md, project contexts, task sources, Telegram notes, and recent files. Steps: list signal sources; define the source of truth for project facts, tasks, management status, and reusable insights; propose a workflow_draft first; mark where human review is required; separately list what should not be automated yet. Output format: workflow draft, sources, output, review point, risks, and a checklist for 2-3 manual runs before automation. Constraints: do not send messages, write to task systems, update management records, or create automation without confirmation. Do not invent tools I do not have.">
+            <div><span>Промпт</span><strong>Найти первый workflow</strong></div>
             <button type="button">Скопировать</button>
           </div>
           <div class="try-this"><span>Попробуйте</span><p>Сделайте ручной daily sync по одному проекту: что изменилось, куда это должно попасть, что требует подтверждения.</p></div>
@@ -812,7 +834,7 @@
             <div><strong>Проектная память</strong><span>`КОНТЕКСТ.md` показывает пользователя, процесс, scope, решения, вопросы и следующий артефакт</span></div>
             <div><strong>Правила</strong><span>Codex знает, что читать, где нельзя угадывать и где нужна проверка человека</span></div>
             <div><strong>Скиллы</strong><span>повторяемые БА-задачи становятся процедурами: PRD, project update, отчёт, briefing</span></div>
-            <div><strong>Daily sync</strong><span>новые сигналы не остаются в чатах, а возвращаются в проект, Реестр, задачу или базу знаний</span></div>
+            <div><strong>Daily sync</strong><span>новые сигналы не остаются в чатах, а возвращаются в проект, предложенное обновление Реестра, задачу или базу знаний</span></div>
             <div><strong>База знаний</strong><span>внешние идеи превращаются в вопросы, паттерны и скиллы для будущих проектов</span></div>
           </div>
           <div class="result-card">
@@ -826,6 +848,11 @@
               Это процесс непрерывного улучшения. Каждый проект должен оставлять после себя не только результат,
               но и более сильную систему: лучшее правило, более точный контекст, новый скилл, полезный шаблон или
               понятную проверку. Так KT OS превращается из папки в рабочую систему команды.
+            </p>
+            <p>
+              При этом улучшение не означает “создать ещё один слой”. Хорошая KT OS растёт через полезные правки:
+              один точный контекст, одно правило, один workflow draft, один скилл или одну проверку, которая реально
+              ускорит следующую похожую работу.
             </p>
           </div>
           <div class="try-this"><span>Попробуйте</span><p>Выберите один проект и доведите его до состояния, где другой БА может продолжить работу без вашей устной вводной.</p></div>
